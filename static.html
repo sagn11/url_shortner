@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MiniTools - URL Shortener & Pastebin</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; }
+    input, textarea { width: 100%; margin: 5px 0; padding: 8px; }
+    button { padding: 10px 15px; margin-top: 10px; }
+    .section { margin-bottom: 40px; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>🛠️ MiniTools – URL Shortener & Pastebin</h1>
+
+  <div class="section">
+    <h2>🔗 URL Shortener</h2>
+    <input type="text" id="urlInput" placeholder="Enter a long URL">
+    <button onclick="shortenURL()">Shorten</button>
+    <p id="shortenedResult"></p>
+  </div>
+
+  <div class="section">
+    <h2>📝 Pastebin</h2>
+    <textarea id="pasteContent" rows="4" placeholder="Write your note here..."></textarea>
+    <input type="number" id="pasteExpiry" placeholder="Expiry (in seconds, default 3600)">
+    <button onclick="createPaste()">Create Paste</button>
+    <p id="pasteResult"></p>
+  </div>
+
+  <script>
+    async function shortenURL() {
+      const url = document.getElementById('urlInput').value;
+      const res = await fetch('/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await res.json();
+      document.getElementById('shortenedResult').innerText = data.short_url || data.error;
+    }
+
+    async function createPaste() {
+      const content = document.getElementById('pasteContent').value;
+      const expiry = document.getElementById('pasteExpiry').value;
+      const res = await fetch('/paste', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, expiry })
+      });
+      const data = await res.json();
+      document.getElementById('pasteResult').innerText = data.paste_url || data.error;
+    }
+  </script>
+
+</body>
+</html>
